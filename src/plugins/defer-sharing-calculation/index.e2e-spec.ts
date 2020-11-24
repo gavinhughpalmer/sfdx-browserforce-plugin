@@ -4,6 +4,20 @@ import * as path from 'path';
 import DeferSharingCalculation from '.';
 
 describe(DeferSharingCalculation.name, () => {
+  it('should error without the defer sharing permission assigned', function() {
+    this.timeout(1000 * 90);
+    this.slow(1000 * 30);
+    const resumeCmd = child.spawnSync(path.resolve('bin', 'run'), [
+      'browserforce:apply',
+      '-f',
+      path.resolve(path.join(__dirname, 'resume.json'))
+    ]);
+    assert.notDeepEqual(resumeCmd.status, 0, resumeCmd.output.toString());
+    assert(
+      /Suspend is not currently available, this could be because you do not have the permission set to allow defer sharing/.test(resumeCmd.output.toString()),
+      resumeCmd.output.toString()
+    );
+  });
   it('should assing the user defer sharing permissions', function() {
     this.timeout(1000 * 180);
     this.slow(1000 * 30);
